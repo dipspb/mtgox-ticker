@@ -7,6 +7,10 @@ var sys = require('util'),
 	remain,
 	timeout;
 
+process.on('uncaughtException', function(err) {
+	sendPush('ERROR');
+});
+
 result = gox.createStream();
 
 var json = '';
@@ -61,9 +65,6 @@ function sendPush (value) {
 	//console.log('push', text);
 
 	prowl.push(text, 'mtgox', function (err, remaining) {
-		if (err) {
-			throw err;
-		}
 		remain = remaining;
 	});
 

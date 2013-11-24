@@ -1,0 +1,23 @@
+{
+  "name": "mtgox-ticker",
+  "version": "0.0.1",
+  "description": "get ticker info from mtgox",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "websocket": "~1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/norlin/mtgox-ticker"
+  },
+  "keywords": [
+    "mtgox",
+    "ticker",
+    "stream"
+  ],
+  "author": "norlin",
+  "license": "MIT"
+}

@@ -4,6 +4,7 @@ var sys = require('util'),
 	result,
 	last,
 	min,
+	max,
 	remain,
 	timeout;
 
@@ -18,7 +19,8 @@ var json = '';
 result.on('data', output);
 
 function output (data) {
-	var ticker;
+	var ticker,
+		needSend = false;
 
 	json += data;
 
@@ -36,35 +38,50 @@ function output (data) {
 
 		if (!min || last < min) {
 			min = last;
-			sendPush(min);
+			needSend = true;
 		} else {
 			min = min;
 		}
+
+		if (!max || last > max) {
+			max = last;
+			needSend = true;
+		} else {
+			max = max;
+		}
+	}
+
+	if (needSend) {
+		sendPush(min, max);
 	}
 }
 
-var prowl = new Prowl('apikey');
+var prowl = new Prowl('apiKey');
 
-function sendPush (value) {
-	var text = '1 btc = $';
+function sendPush (valMin, valMax) {
+	var text = 'min $%min%\nmax $%max%';
 
 	if (timeout) {
 		clearTimeout(timeout);
 		timeout = null;
 	}
 
-	if (!value) {
-		value = min;
-		text = 'Last = $';
+	if (!valMin || !valMax) {
+		valMin = valMin || min;
+		valMax = valMax || max;
+		text = 'Last min $%min%\nmax $%max%';
 	}
 
-	value = value || min;
-	text += value;
-	text += '\n remain ' + (remain-1);
+	text = text.replace('%min%', valMin);
+	text = text.replace('%max%', valMax);
+	text += '\n remain ' + (remain||999);
 
 	//console.log('push', text);
 
 	prowl.push(text, 'mtgox', function (err, remaining) {
+		/*if (err) {
+			console.log(err);
+		}*/
 		remain = remaining;
 	});
 
